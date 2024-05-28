@@ -1,6 +1,9 @@
 const API = {
     endpoint: "/auth/",
     // ADD HERE ALL THE OTHER API FUNCTIONS
+    checkAuthOption: async (user) => {
+        return await API.makePostRequest(API.endpoint + "auth-option", user)
+    },
     login: async (user) => {
         return await API.makePostRequest(API.endpoint + "login", user);
     },
@@ -9,6 +12,26 @@ const API = {
     },
     loginFromGoogle: async (data) => {
         return await API.makePostRequest(API.endpoint + "login-google", data);
+    },
+    webAuthn: {
+        loginOptions: async (email) => {
+            return await API.makePostRequest(API.endpoint + "webauth-login-options", { email });
+        },
+        loginVerification: async (email, data) => {
+            return await API.makePostRequest(API.endpoint + "webauth-login-verification", {
+                email,
+                data
+            });                       
+        },
+        registrationOptions: async () => {
+            return await API.makePostRequest(API.endpoint + "webauth-registration-options", Auth.account);           
+        },
+        registrationVerification: async (data) => {
+            return await API.makePostRequest(API.endpoint + "webauth-registration-verification", {
+                user: Auth.account,
+                data
+            });                       
+        }
     },
     makePostRequest: async (url, data) => {
         try {

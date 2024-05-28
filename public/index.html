@@ -17,6 +17,7 @@
     <link rel="manifest" href="app.webmanifest">
     <link rel="apple-touch-icon" href="images/icons/icon.png">
     <link rel="icon" href="images/icons/icon.png">
+    <script src="https://unpkg.com/@simplewebauthn/browser/dist/bundle/index.umd.min.js"></script>
     <script src="scripts/app.js" type="module"></script>
     <script src="https://accounts.google.com/gsi/client" async defer></script>
     <script>
@@ -82,8 +83,11 @@
                 <fieldset>
                     <label for="login_email">Email</label>
                     <input id="login_email" required autocomplete="username">
+                    <section hidden id="login_section_password">
                     <label for="login_password">Password</label>
                     <input type="password" id="login_password" autocomplete="current-password">
+                </section>
+                <section hidden id="login_section_webauthn"></section>
                     <div id="g_id_onload"
      data-client_id="1078969278600-b7f7e4ec271dsqq6r2pavhii68kfc7kr.apps.googleusercontent.com"
      data-context="signin"
@@ -122,6 +126,9 @@
             </dl>
 
             <button onclick="Auth.logout()">Log out</button>
+        </section>
+        <section id="webauthn">
+            <button onclick="Auth.addWebAuthn()">Add Authenticator / Passkey</button>
         </section>
     </main>
 </body>

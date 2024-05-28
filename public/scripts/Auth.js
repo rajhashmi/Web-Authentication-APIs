@@ -32,19 +32,52 @@ const Auth = {
         const response = await API.register(user);
         Auth.postLogin(response, user);
     },
+    checkAuthOptions: async () => {
+        const response = await API.checkAuthOption({
+            email: document.getElementById("login_email").value
+        });
+        console.log(response);
+        Auth.loginStep = 2;
 
+        if(!response.password){
+            document.getElementById("login_section_password").hidden = false
+        };
+        if(!response.webauthn){
+            document.getElementById("login_section_webauthn").hidden = false;
+        }
+
+    },
+    addWebAuthn: async () => {           
+        const options = await API.webAuthn.registrationOptions();        
+        options.authenticatorSelection.residentKey = 'required';
+        options.authenticatorSelection.requireResidentKey = true;
+        options.extensions = {
+            credProps: true,
+        };
+        const authRes = await SimpleWebAuthnBrowser.startRegistration(options);
+        const verificationRes = await API.webAuthn.registrationVerification(authRes);
+        if (verificationRes.ok) {
+            alert("You can now login using the registered method!");
+        } else {
+            alert(verificationRes.message)
+        }
+    },
     login: async (event) => {
         if (event) event.preventDefault();
-        const user = {
-            email: document.getElementById("login_email").value,
-            password: document.getElementById("login_password").value
-    
-        };
-        const response = await API.login(user);
-        Auth.postLogin(response, { 
-            ...user,
-            name: response.name
-        });
+        if(Auth.loginStep===1){
+            Auth.checkAuthOptions()
+        }else{
+            const user = {
+                email: document.getElementById("login_email").value,
+                password: document.getElementById("login_password").value
+        
+            };
+            const response = await API.login(user);
+            Auth.postLogin(response, { 
+                ...user,
+                name: response.name
+            });
+        }
     
     },
     updateStatus() {
@@ -72,8 +105,10 @@ const Auth = {
 
         }
     },    
+    loginStep:1,
     init: () => {
-        
+        document.getElementById("login_section_password").hidden = true;
+        document.getElementById("login_section_webauthn").hidden = true;
     },
 }
 Auth.updateStatus();
