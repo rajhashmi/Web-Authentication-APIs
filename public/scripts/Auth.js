@@ -15,6 +15,13 @@ const Auth = {
             alert(response.message)
         }           
     },
+    loginFromGoogle: async (data) => {
+        const response = await API.loginFromGoogle(data)
+        Auth.postLogin(response, {
+            name: response.name, 
+            email: response.email
+        });
+    },
     register: async  (event) => {
         event.preventDefault();
         const user = {
